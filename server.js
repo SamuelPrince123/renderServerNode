@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const admin = require("firebase-admin");
+const path = require("path");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -10,8 +11,7 @@ const serviceAccount = require("./privateKey/products-67eef-firebase-adminsdk-x5
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL:
-    "https://products-67eef-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  databaseURL: "https://products-67eef-default-rtdb.asia-southeast1.firebasedatabase.app/",
 });
 
 const db = admin.database();
@@ -24,6 +24,14 @@ app.use(
     origin: "http://127.0.0.1:5500",
   })
 );
+
+// Serve static files from the 'public' directory
+app.use(express.static('public'));
+
+// Route to serve the HTML file
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 app.post("/products", (req, res) => {
   try {
