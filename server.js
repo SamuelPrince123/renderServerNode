@@ -25,12 +25,12 @@ app.use(
   })
 );
 
-// Serve static files from the 'public' directory
-app.use(express.static('public'));
+// Serve static files from the root directory
+app.use(express.static(path.join(__dirname)));
 
 // Route to serve the HTML file
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.post("/products", (req, res) => {
