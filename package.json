@@ -1,7 +1,6 @@
 {
   "name": "test",
   "version": "1.0.0",
-  "main": "script.js",
   "proxy": "https://theomnivorouspalaceform.kesug.com/",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
