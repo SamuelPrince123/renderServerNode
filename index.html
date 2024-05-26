@@ -50,7 +50,7 @@
             const productForm = document.getElementById("productForm");
             const productList = document.getElementById("productList");
             const submitProductsButton = document.getElementById("submitProductsButton");
-            const uploadMessage = document.getElementById("uploadMessage");
+            const uploadMessage = document.getElementById("uploadMessage"); 
 
             productForm.addEventListener("submit", function (event) {
                 event.preventDefault();
@@ -58,11 +58,11 @@
                 const name = document.getElementById("name").value;
                 const description = document.getElementById("description").value;
                 const price = document.getElementById("price").value;
-                const category = document.getElementById("category").value;
-                const image = document.getElementById("image").files[0]; // Get the first selected image file
+                const category = document.getElementById("category").value; 
+                const image = document.getElementById("image").files[0]; 
 
                 if (name && description && price && category && image) {
-                    const formData = new FormData(); // Create FormData object
+                    const formData = new FormData(); 
                     formData.append("name", name);
                     formData.append("description", description);
                     formData.append("price", price);
@@ -71,7 +71,7 @@
 
                     fetch("https://renderservernode-10.onrender.com/products", {
                         method: "POST",
-                        body: formData, // Set FormData as the body
+                        body: formData, 
                     })
                         .then((response) => {
                             if (!response.ok) {
@@ -90,6 +90,49 @@
                     alert("Please enter name, description, price, category, and select an image for the product.");
                 }
             });
+
+            submitProductsButton.addEventListener("click", function () {
+                const products = [];
+                const listItems = productList.querySelectorAll("li");
+
+                listItems.forEach(function (listItem) {
+                    const product = {};
+                    const name = listItem.querySelector("strong").textContent;
+                    const price = parseFloat(listItem.textContent.split(" - ")[1].replace("Nu", ""));
+                    const category = listItem.textContent.split(" - ")[2].split(": ")[1]; 
+                    const description = listItem.textContent.split("<br>")[1]; 
+                    product.name = name;
+                    product.price = price;
+                    product.category = category;
+                    product.description = description;
+                    products.push(product);
+                });
+
+                sendDataToServer(products);
+            });
+
+            function sendDataToServer(products) {
+                fetch("https://renderservernode-10.onrender.com/products", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(products),
+                })
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error("Network response was not ok");
+                        }
+                        return response.text();
+                    })
+                    .then((data) => {
+                        console.log("Server response:", data);
+                        uploadMessage.textContent = "Data uploaded successfully!";
+                    })
+                    .catch((error) => {
+                        console.error("Error submitting products:", error);
+                    });
+            }
         });
     </script>
 </body>
