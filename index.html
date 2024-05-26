@@ -47,90 +47,50 @@
     <div id="uploadMessage"></div>
     <script> 
         document.addEventListener("DOMContentLoaded", function () {
-  const productForm = document.getElementById("productForm");
-  const productList = document.getElementById("productList");
-  const submitProductsButton = document.getElementById("submitProductsButton");
-  const uploadMessage = document.getElementById("uploadMessage"); // Get the element where you want to display the upload message
+            const productForm = document.getElementById("productForm");
+            const productList = document.getElementById("productList");
+            const submitProductsButton = document.getElementById("submitProductsButton");
+            const uploadMessage = document.getElementById("uploadMessage");
 
-  productForm.addEventListener("submit", function (event) {
-    event.preventDefault();
+            productForm.addEventListener("submit", function (event) {
+                event.preventDefault();
 
-    const name = document.getElementById("name").value;
-    const description = document.getElementById("description").value;
-    const price = document.getElementById("price").value;
-    const category = document.getElementById("category").value; // Get category value
+                const name = document.getElementById("name").value;
+                const description = document.getElementById("description").value;
+                const price = document.getElementById("price").value;
+                const category = document.getElementById("category").value;
+                const image = document.getElementById("image").files[0]; // Get the first selected image file
 
-    if (name && description && price && category) {
-      const listItem = document.createElement("li");
-      listItem.innerHTML = `<strong>${name}</strong> - Nu${price} - Category: ${category}<br>${description}`; // Display category and description
+                if (name && description && price && category && image) {
+                    const formData = new FormData(); // Create FormData object
+                    formData.append("name", name);
+                    formData.append("description", description);
+                    formData.append("price", price);
+                    formData.append("category", category);
+                    formData.append("image", image);
 
-      const deleteButton = document.createElement("button");
-      deleteButton.textContent = "Delete";
-      deleteButton.addEventListener("click", function () {
-        productList.removeChild(listItem);
-      });
-
-      listItem.appendChild(deleteButton);
-      productList.appendChild(listItem);
-
-      // Clear input fields after adding product
-      document.getElementById("name").value = "";
-      document.getElementById("description").value = "";
-      document.getElementById("price").value = "";
-      document.getElementById("category").value = ""; // Clear category input
-    } else {
-      alert("Please enter name, description, price, and category for the product.");
-    }
-  });
-
-  submitProductsButton.addEventListener("click", function () {
-    const products = [];
-    const listItems = productList.querySelectorAll("li");
-
-    listItems.forEach(function (listItem) {
-      const product = {};
-      const name = listItem.querySelector("strong").textContent;
-      const price = parseFloat(listItem.textContent.split(" - ")[1].replace("Nu", ""));
-      const category = listItem.textContent.split(" - ")[2].split(": ")[1]; // Extract category from the text
-      const description = listItem.textContent.split("<br>")[1]; // Extract description from the text
-      product.name = name;
-      product.price = price;
-      product.category = category;
-      product.description = description;
-      products.push(product);
-    });
-
-    // Send products data to server
-    sendDataToServer(products);
-  });
-
-  function sendDataToServer(products) {
-    fetch("https://renderservernode-10.onrender.com/products", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(products),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.text();
-      })
-      .then((data) => {
-        console.log("Server response:", data);
-        // Show upload message
-        uploadMessage.textContent = "Data uploaded successfully!";
-      })
-      .catch((error) => {
-        console.error("Error submitting products:", error);
-        // Optionally, you can handle errors that occur during the submission process
-      });
-  }
-});
+                    fetch("https://renderservernode-10.onrender.com/products", {
+                        method: "POST",
+                        body: formData, // Set FormData as the body
+                    })
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error("Network response was not ok");
+                            }
+                            return response.text();
+                        })
+                        .then((data) => {
+                            console.log("Server response:", data);
+                            uploadMessage.textContent = "Data uploaded successfully!";
+                        })
+                        .catch((error) => {
+                            console.error("Error submitting products:", error);
+                        });
+                } else {
+                    alert("Please enter name, description, price, category, and select an image for the product.");
+                }
+            });
+        });
     </script>
-
-
 </body>
 </html>
