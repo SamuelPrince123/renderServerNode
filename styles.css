@@ -3,27 +3,37 @@ body {
     margin: 0;
     padding: 0;
     text-align: start;
+    background-color: #f4f4f4; /* Added background color for a modern look */
 }
 
 h1, h2 {
     text-align: start;
+    color: #333; /* Added color for headings */
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff; /* Added background color for container */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Added box shadow for a slight depth effect */
+    border-radius: 10px; /* Added border radius for a rounded look */
 }
 
 form {
-    
-
     max-width: 400px;
-    margin: 0 auto;
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Added box shadow for a slight depth effect */
+    background-color: #fff; /* Added background color for form */
 }
 
 label {
-    display: flex;
-    margin-bottom: 5px;
-    text-align: start;
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold; /* Added bold font weight for labels */
+    color: #555; /* Added color for labels */
 }
 
 input[type="text"],
@@ -35,6 +45,7 @@ select {
     border: 1px solid #ccc;
     border-radius: 5px;
     box-sizing: border-box;
+    font-size: 16px; /* Increased font size for better readability */
 }
 
 input[type="number"] {
@@ -45,10 +56,13 @@ button[type="submit"],
 button#submitProductsButton {
     background-color: #4CAF50;
     color: white;
-    padding: 10px 20px;
+    padding: 12px 20px; /* Increased padding for buttons */
+    margin-top: 10px; /* Added margin to separate buttons */
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 16px; /* Increased font size for better visibility */
+    transition: background-color 0.3s ease; /* Added smooth transition for hover effect */
 }
 
 button[type="submit"]:hover,
@@ -66,15 +80,18 @@ ul#productList li {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Added box shadow for a slight depth effect */
+    background-color: #fff; /* Added background color for list items */
 }
 
 ul#productList li button {
     background-color: #f44336;
     color: white;
-    padding: 5px 10px;
+    padding: 8px 12px; /* Increased padding for buttons */
     border: none;
     border-radius: 3px;
     cursor: pointer;
+    font-size: 14px; /* Decreased font size for better fit */
 }
 
 ul#productList li button:hover {
