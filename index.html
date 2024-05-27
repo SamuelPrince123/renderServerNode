@@ -27,7 +27,6 @@
             <option value="Meat">Meat</option>
             <option value="Laptop">Laptop</option>
             <option value="Phones">Phones</option>
-            <!-- Add more categories as needed -->
         </select><br>
 
         <label for="image">Image:</label>
@@ -38,99 +37,179 @@
 
     <button id="submitProductsButton">Submit Products</button>
 
+      <!-- Display upload message -->
+      <div id="uploadMessage"></div>
+      <div id="progressContainer" style="display: none;">
+          <progress id="uploadProgress" value="0" max="100"></progress>
+          <span id="uploadProgressText">0%</span>
+      </div>
+
     <h2>Product List</h2>
     <ul id="productList">
         <!-- Existing products will be listed here -->
     </ul>
 
-    <!-- Display upload message -->
-    <div id="uploadMessage"></div>
-    <script> 
+  
+
+    <script>
         document.addEventListener("DOMContentLoaded", function () {
-  const productForm = document.getElementById("productForm");
-  const productList = document.getElementById("productList");
-  const submitProductsButton = document.getElementById("submitProductsButton");
-  const uploadMessage = document.getElementById("uploadMessage"); // Get the element where you want to display the upload message
+            const productForm = document.getElementById("productForm");
+            const productList = document.getElementById("productList");
+            const submitProductsButton = document.getElementById("submitProductsButton");
+            const uploadMessage = document.getElementById("uploadMessage");
+            const progressContainer = document.getElementById("progressContainer");
+            const uploadProgress = document.getElementById("uploadProgress");
+            const uploadProgressText = document.getElementById("uploadProgressText");
 
-  productForm.addEventListener("submit", function (event) {
-    event.preventDefault();
+            productForm.addEventListener("submit", function (event) {
+                event.preventDefault();
 
-    const name = document.getElementById("name").value;
-    const description = document.getElementById("description").value;
-    const price = document.getElementById("price").value;
-    const category = document.getElementById("category").value; // Get category value
+                const name = document.getElementById("name").value;
+                const description = document.getElementById("description").value;
+                const price = document.getElementById("price").value;
+                const category = document.getElementById("category").value;
+                const image = document.getElementById("image").files[0];
 
-    if (name && description && price && category) {
-      const listItem = document.createElement("li");
-      listItem.innerHTML = `<strong>${name}</strong> - Nu${price} - Category: ${category}<br>${description}`; // Display category and description
+                if (name && description && price && category && image) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const imageUrl = e.target.result;
 
-      const deleteButton = document.createElement("button");
-      deleteButton.textContent = "Delete";
-      deleteButton.addEventListener("click", function () {
-        productList.removeChild(listItem);
-      });
+                        // Resize and compress the image
+                        const img = new Image();
+                        img.src = imageUrl;
+                        img.onload = function () {
+                            const canvas = document.createElement("canvas");
+                            const ctx = canvas.getContext("2d");
+                            const maxWidth = 800; // Max width for the image
+                            const maxHeight = 600; // Max height for the image
 
-      listItem.appendChild(deleteButton);
-      productList.appendChild(listItem);
+                            let width = img.width;
+                            let height = img.height;
 
-      // Clear input fields after adding product
-      document.getElementById("name").value = "";
-      document.getElementById("description").value = "";
-      document.getElementById("price").value = "";
-      document.getElementById("category").value = ""; // Clear category input
-    } else {
-      alert("Please enter name, description, price, and category for the product.");
-    }
-  });
+                            if (width > height) {
+                                if (width > maxWidth) {
+                                    height = Math.round((height *= maxWidth / width));
+                                    width = maxWidth;
+                                }
+                            } else {
+                                if (height > maxHeight) {
+                                    width = Math.round((width *= maxHeight / height));
+                                    height = maxHeight;
+                                }
+                            }
 
-  submitProductsButton.addEventListener("click", function () {
-    const products = [];
-    const listItems = productList.querySelectorAll("li");
+                            canvas.width = width;
+                            canvas.height = height;
+                            ctx.drawImage(img, 0, 0, width, height);
 
-    listItems.forEach(function (listItem) {
-      const product = {};
-      const name = listItem.querySelector("strong").textContent;
-      const price = parseFloat(listItem.textContent.split(" - ")[1].replace("Nu", ""));
-      const category = listItem.textContent.split(" - ")[2].split(": ")[1]; // Extract category from the text
-      const description = listItem.textContent.split("<br>")[1]; // Extract description from the text
-      product.name = name;
-      product.price = price;
-      product.category = category;
-      product.description = description;
-      products.push(product);
-    });
+                            // Convert canvas to base64 encoded JPEG with compression quality 0.7
+                            const compressedImageUrl = canvas.toDataURL("image/jpeg", 0.7);
 
-    // Send products data to server
-    sendDataToServer(products);
-  });
+                            const listItem = document.createElement("li");
+                            listItem.innerHTML = `
+                                <strong class="product-name">${name}</strong> - Nu${price} - Category: <span class="product-category">${category}</span><br>
+                                <span class="product-description">${description}</span><br>
+                                <img src="${compressedImageUrl}" alt="${name}" style="max-width: 100px; max-height: 100px;"><br>
+                            `;
 
-  function sendDataToServer(products) {
-    fetch("https://renderservernode-10.onrender.com/products", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(products),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.text();
-      })
-      .then((data) => {
-        console.log("Server response:", data);
-        // Show upload message
-        uploadMessage.textContent = "Data uploaded successfully!";
-      })
-      .catch((error) => {
-        console.error("Error submitting products:", error);
-        // Optionally, you can handle errors that occur during the submission process
-      });
-  }
-});
+                            const deleteButton = document.createElement("button");
+                            deleteButton.textContent = "Delete";
+                            deleteButton.addEventListener("click", function () {
+                                productList.removeChild(listItem);
+                            });
+
+                            listItem.appendChild(deleteButton);
+                            productList.appendChild(listItem);
+
+                            // Clear the form inputs
+                            productForm.reset();
+                        };
+                    };
+                    reader.readAsDataURL(image);
+                } else {
+                    alert("Please enter all product details and select an image.");
+                }
+            });
+
+            submitProductsButton.addEventListener("click", function () {
+                const products = [];
+                const listItems = productList.querySelectorAll("li");
+
+                listItems.forEach(function (listItem) {
+                    const product = {};
+                    const name = listItem.querySelector(".product-name").textContent;
+                    const price = parseFloat(listItem.querySelector(".product-name").nextSibling.nodeValue.split("Nu")[1]);
+                    const category = listItem.querySelector(".product-category").textContent;
+                    const description = listItem.querySelector(".product-description").textContent;
+                    const imageUrl = listItem.querySelector("img").src;
+
+                    product.name = name;
+                    product.price = price;
+                    product.category = category;
+                    product.description = description;
+                    product.imageUrl = imageUrl;
+                    products.push(product);
+                });
+
+                if (products.length === 0) {
+                    alert("No products to submit.");
+                    return;
+                }
+
+                // Show buffering message
+                uploadMessage.textContent = "Uploading products...";
+                progressContainer.style.display = "block";
+
+                uploadProductsOneByOne(products);
+            });
+
+            function uploadProductsOneByOne(products) {
+                let index = 0;
+
+                function uploadNext() {
+                    if (index < products.length) {
+                        const product = products[index];
+
+                        fetch("https://renderservernode-10.onrender.com/products", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify([product]),
+                        })
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error("Network response was not ok");
+                            }
+                            return response.text();
+                        })
+                        .then((data) => {
+                            console.log("Server response:", data);
+                            index++;
+                            const progress = Math.round((index / products.length) * 100);
+                            uploadProgress.value = progress;
+                            uploadProgressText.textContent = `${progress}%`;
+
+                            if (index < products.length) {
+                                uploadNext();
+                            } else {
+                                uploadMessage.textContent = "Products uploaded successfully!";
+                                progressContainer.style.display = "none";
+                                productList.innerHTML = ""; // Clear the product list
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Error submitting product:", error);
+                            uploadMessage.textContent = "Error uploading products.";
+                            progressContainer.style.display = "none";
+                        });
+                    }
+                }
+
+                uploadNext();
+            }
+        });
     </script>
-
-
 </body>
 </html>
