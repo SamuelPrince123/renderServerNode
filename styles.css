@@ -13,8 +13,8 @@ h1, h2 {
 
 .container {
     max-width: 100%;
-    margin: 0 auto;
-    padding: 20px;
+    margin: 30 auto;
+    padding: 10px;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
@@ -35,14 +35,14 @@ label {
     display: block;
     margin-bottom: 10px;
     font-weight: bold;
-    color: #555;
+    color: #000;
 }
 
 input[type="text"],
 textarea,
 select,
 input[type="number"] {
-    width: 100%;
+    width: 40%;
     padding: 10px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
@@ -101,11 +101,38 @@ ul#productList li button:hover {
 
 @media screen and (min-width: 800px) {
     .container {
-        max-width: 800px;
+        max-width: 100%;
+        margin-top: 20px;
     }
 
     form {
-        max-width: 400px;
+        max-width: 100%;
     }
+    input[type="text"],
+textarea,
+select,
+input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+button[type="submit"],
+button#submitProductsButton {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
  
 }
