@@ -11,12 +11,15 @@ const serviceAccount = require("./privateKey/products-67eef-firebase-adminsdk-x5
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://products-67eef-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  databaseURL:
+    "https://products-67eef-default-rtdb.asia-southeast1.firebasedatabase.app/",
 });
 
 const db = admin.database();
 
-app.use(bodyParser.json());
+// Increase payload size limit to 50MB
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 // Enable CORS for specific origin
 app.use(
@@ -29,8 +32,8 @@ app.use(
 app.use(express.static(path.join(__dirname)));
 
 // Route to serve the HTML file
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
 app.post("/products", (req, res) => {
@@ -74,5 +77,5 @@ app.get("/products", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server running at http://localhost:${port}`);
 });
