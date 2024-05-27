@@ -99,7 +99,7 @@ ul#productList li button:hover {
     background-color: #d32f2f;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (min-width: 800px) {
     .container {
         max-width: 800px;
     }
@@ -107,8 +107,5 @@ ul#productList li button:hover {
     form {
         max-width: 400px;
     }
-    button[type="submit"],
-    button#submitProductsButton {
-        width: 100%;
-    }
+ 
 }
